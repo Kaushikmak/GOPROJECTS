@@ -8,7 +8,7 @@ import (
 )
 
 // JsonParser takes a raw JSON string and returns the parsed data as an interface{}.
-func JsonParser(input string) interface{} {
+func JsonParser(input string) any {
 	l := lexer.New(input)
 	p := parser.New(l)
 	result := p.Parse()
