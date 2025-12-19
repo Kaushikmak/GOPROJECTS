@@ -18,7 +18,7 @@ func escapeString(s string) string {
 // serialize the TASK
 func Serialize(T models.Task) string {
 	return fmt.Sprintf(
-		"{ \"id\": %v, \"task\": \"%s\", \"status\": \"%s\", \"created at\": \"%s\", \"updated at\": \"%s\" }",
+		"{ \"id\": %v, \"task\": \"%s\", \"status\": \"%s\", \"created_at\": \"%s\", \"updated_at\": \"%s\" }",
 		T.Id.String(),
 		escapeString(T.Description),
 		models.StatusToString(T.Status),

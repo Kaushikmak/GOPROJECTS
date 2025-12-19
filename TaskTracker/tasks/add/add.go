@@ -9,6 +9,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/kaushikmak/go-projects/TaskTracker/models"
 	"github.com/kaushikmak/go-projects/TaskTracker/utility/fileio"
+	"github.com/kaushikmak/go-projects/TaskTracker/utility/serialization"
 )
 
 func Add(taskDescription []string) {
@@ -28,10 +29,11 @@ func Add(taskDescription []string) {
 
 	fmt.Println(task)
 
-	x, err := fileio.ReadData()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error reading")
-	}
-	fmt.Println(string(x))
+	serializedTask := serialization.Serialize(task)
+
+	data, _ := fileio.ReadData()
+	fmt.Println(string(data))
+
+	fmt.Println(serializedTask)
 
 }

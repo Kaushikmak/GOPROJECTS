@@ -20,7 +20,8 @@ type TASKSTATUS int
 
 // status code
 const (
-	TODO = iota
+	TODO TASKSTATUS = iota
 	IN_PROGRESS
 	DONE
+	UNKNOWN
 )

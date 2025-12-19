@@ -29,7 +29,9 @@ func ReadData() ([]byte, error) {
 }
 
 // function to append data to file
-// func AppendFile() ([]byte, error)
+// func AppendFile() ([]byte, error){
+
+// }
 
 // function to delete file
 // func DeleteFile()
