@@ -27,13 +27,15 @@ func Add(taskDescription []string) {
 		UpdatedAt:   time.Now(),
 	}
 
-	fmt.Println(task)
+	// fmt.Println(task)
 
 	serializedTask := serialization.Serialize(task)
 
-	data, _ := fileio.ReadData()
-	fmt.Println(string(data))
-
-	fmt.Println(serializedTask)
+	err := fileio.AppendTask(serializedTask)
+	if err != nil {
+		fmt.Println("Error saving task: %v\n", err)
+		return
+	}
+	fmt.Println("Task added successfully (ID:%s)\n", task.Id)
 
 }
