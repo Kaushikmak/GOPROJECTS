@@ -1,77 +1,90 @@
 package fileio
 
 import (
-	"fmt"
+	"encoding/json"
 	"os"
 	"path/filepath"
-	"strings"
+
+	"github.com/kaushikmak/go-projects/TaskTracker/models"
 )
 
-// get file path of data.json
-func getDataFilePath() (string, error) {
-	exePath, err := os.Executable()
-	if err != nil {
-		return "", err
-	}
-	exeDir := filepath.Dir(exePath)
-	return filepath.Join(exeDir, "data", "data.json"), nil
+
+
+const DIR_NAME = ".task-tracker"
+const FILE_NAME = "data.json"
+
+
+func EnsureStorage() (string,error) {
+    home,err := os.UserHomeDir()
+    if err != nil {
+        return "",err
+    }
+    dir := filepath.Join(home,DIR_NAME)
+    if err := os.MkdirAll(dir,0755); err != nil {
+        return "",err
+    }
+
+    path := filepath.Join(dir,FILE_NAME)
+
+    if _,err := os.Stat(path); os.IsNotExist(err){
+        f,err := os.OpenFile(path,os.O_CREATE,0644)
+        if err != nil {
+            return "",nil
+        }
+        f.Close()
+    }
+
+    return path,nil
 }
 
-// ReadData from file if not exits then create one
-func ReadData() ([]byte, error) {
-	path, err := getDataFilePath()
-	if err != nil {
-		return nil, err
-	}
-	// Create file if it doesn't exist
-	if _, err := os.Stat(path); os.IsNotExist(err) {
-		// Initialize with empty JSON array
-		err := os.WriteFile(path, []byte("[]"), 0644)
-		if err != nil {
-			return nil, err
-		}
-		return []byte("[]"), nil
-	}
-	return os.ReadFile(path)
+func Load(path string) ([]models.Task,error) {
+    data,err := os.ReadFile(path)
+    if err != nil {
+        return nil,err
+    }
+    if len(data) == 0{
+        return []models.Task{},nil
+    }
+    var tasks []models.Task
+    if err := json.Unmarshal(data,&tasks); err != nil {
+        return nil,err
+    }
+    return tasks,nil
 }
 
-// WriteData overwrites the file with new data
-func WriteData(data []byte) error {
-	path, err := getDataFilePath()
-	if err != nil {
-		return err
-	}
-	return os.WriteFile(path, data, 0644)
+func Save(path string,tasks []models.Task) error {
+    data,err := json.MarshalIndent(tasks,""," ")
+    if err != nil {
+        return err
+    }
+    tmp := path + ".tmp"
+
+    if err := os.WriteFile(tmp,data,0644); err != nil {
+        return nil
+    }
+
+    return os.Rename(tmp,path)
 }
 
-// AppendTask adds a serialized JSON object string to the JSON array in the file
-func AppendTask(taskJSON string) error {
-	// 1. Read existing data
-	data, err := ReadData()
-	if err != nil {
-		return err
-	}
 
-	content := string(data)
-	content = strings.TrimSpace(content)
 
-	// 2. Handle empty file or empty list case
-	if len(content) == 0 || content == "[]" {
-		newContent := fmt.Sprintf("[%s]", taskJSON)
-		return WriteData([]byte(newContent))
-	}
 
-	// 3. Validation: Ensure we are appending to a valid list
-	if !strings.HasSuffix(content, "]") {
-		return fmt.Errorf("file content is not a valid JSON array")
-	}
 
-	// 4. Modify String:
-	// Remove the last ']'
-	content = content[:len(content)-1]
-	// Append ", " + newObject + "]"
-	newContent := fmt.Sprintf("%s, %s]", content, taskJSON)
 
-	// 5. Write back to file
-	return WriteData([]byte(newContent))
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
