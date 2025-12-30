@@ -1,5 +1,7 @@
 package models
 
+import "strings"
+
 func StatusToString(status TASKSTATUS) string {
 	switch status {
 	case TODO:
@@ -14,12 +16,12 @@ func StatusToString(status TASKSTATUS) string {
 }
 
 func StringToStatus(s string) TASKSTATUS {
-	switch s {
-	case "TODO":
+	switch strings.ToLower(s) {
+	case "todo":
 		return TODO
-	case "IN-PROGRESS", "INPROGRESS":
+	case "in-progress", "inprogress":
 		return IN_PROGRESS
-	case "DONE":
+	case "done":
 		return DONE
 	default:
 		return UNKNOWN
