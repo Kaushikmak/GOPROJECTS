@@ -7,9 +7,13 @@ import (
 
 	"github.com/kaushikmak/go-projects/TaskTracker/tasks/add"
 	"github.com/kaushikmak/go-projects/TaskTracker/tasks/help"
+	"github.com/kaushikmak/go-projects/TaskTracker/tasks/taskdelete"
+	"github.com/kaushikmak/go-projects/TaskTracker/tasks/tasklist"
+	"github.com/kaushikmak/go-projects/TaskTracker/tasks/taskmark"
+	"github.com/kaushikmak/go-projects/TaskTracker/tasks/taskupdate"
 )
 
-var COMMANDS = []string{"add", "update", "delete", "mark-in-progress", "mark-done", "list", "help"}
+var COMMANDS = []string{"add", "update", "delete", "mark", "list", "help"}
 
 func main() {
 	// fetch command given by user
@@ -25,6 +29,7 @@ func main() {
 	if !slices.Contains(COMMANDS, cmd) {
 		fmt.Fprintf(os.Stderr, "Error: '%s' is not a valid command.\n", cmd)
 		help.ShowOptions()
+        return
 	}
 
 	switch cmd {
@@ -32,7 +37,17 @@ func main() {
 		help.ShowOptions()
 	case "add":
 		add.Add(args)
-
-	}
+    case "list":
+       tasklist.List(args) 
+   case "delete":
+        taskdelete.Delete(args)
+    case "update":
+        taskupdate.Update(args)
+    case "mark":
+        taskmark.Mark(args)
+    default:
+        help.ShowOptions()
+        return
+    }
 
 }
