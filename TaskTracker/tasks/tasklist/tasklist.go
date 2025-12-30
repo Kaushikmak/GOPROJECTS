@@ -56,7 +56,6 @@ func List(taskDescription []string){
     }
 
     taskDesc := strings.Join(taskDescription[2:]," ")
-    taskDesc = strings.ToUpper(taskDesc)
     
     if taskDesc == ""{
         listAll(tasks)
