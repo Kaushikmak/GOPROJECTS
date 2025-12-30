@@ -12,19 +12,6 @@ The project is designed with a clean separation between:
 This makes the codebase easy to extend and reason about.
 
 ---
-
-## Features
-
-- Add tasks with descriptions
-- List tasks in a clean, column-based layout
-- Filter tasks by status (todo, done, in-progress)
-- Update task descriptions
-- Mark tasks as todo, done, or in-progress
-- Delete tasks by ID
-- Human-readable timestamps (Today, Yesterday, etc.)
-- Colored status output in supported terminals
-- Cross-platform (Windows, Linux, macOS)
-
 ---
 
 ## Requirements
@@ -142,12 +129,3 @@ task-cli delete <task-id>
 
 ---
 
-## How It Works
-
-- Load tasks from disk
-- Modify tasks in memory
-- Save tasks back to disk atomically
-
-This design favors correctness and simplicity.
-
----
