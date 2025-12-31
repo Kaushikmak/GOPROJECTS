@@ -333,42 +333,47 @@ h2 {
 .line { margin-bottom: 0.6rem; word-break: break-all; }
 .output { color: var(--text-secondary); }
 
-/* --- Command Table --- */
-.command-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
+/* --- Demo Section & Buttons --- */
+.demo-controls {
+    display: flex;
+    justify-content: center;
+    gap: 0.8rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.demo-btn {
     background-color: var(--card-bg);
-    border-radius: 12px;
-    overflow: hidden;
     border: 1px solid #30363d;
-}
-
-.command-table th, .command-table td {
-    padding: 1rem;
-    text-align: left;
-    border-bottom: 1px solid #30363d;
-}
-
-.command-table th {
-    background-color: #21262d;
-    font-weight: 600;
+    color: var(--text-secondary);
+    padding: 0.5rem 1.2rem;
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: var(--font-sans);
     font-size: 0.9rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    font-weight: 500;
+    transition: all 0.2s ease;
 }
 
-.command-table tr:last-child td {
-    border-bottom: none;
+.demo-btn:hover {
+    border-color: var(--text-secondary);
+    color: var(--text-primary);
 }
 
-.command-table code {
-    background-color: rgba(110, 118, 129, 0.2);
-    padding: 0.2rem 0.5rem;
-    border-radius: 6px;
-    font-family: var(--font-mono);
-    color: #fff;
-    border: 1px solid #30363d;
+.demo-btn.active {
+    background-color: rgba(35, 134, 54, 0.15);
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.demo-terminal {
+    min-height: 320px;
+}
+
+.cursor-blink {
+    animation: blink 1s step-end infinite;
+    color: var(--accent);
+    margin-left: 2px;
 }
 
 /* --- Footer --- */
@@ -420,10 +425,5 @@ footer {
     
     .container {
         padding: 3rem 1rem;
-    }
-    
-    .command-table {
-        display: block;
-        overflow-x: auto;
     }
 }

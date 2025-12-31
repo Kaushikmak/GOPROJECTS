@@ -39,8 +39,8 @@
         </div>
         <ul class="nav-links">
             <li><a href="#features">Features</a></li>
+            <li><a href="#live-demo">Live Demo</a></li>
             <li><a href="#installation">Installation</a></li>
-            <li><a href="#usage">Usage</a></li>
             <li><a href="https://github.com/Kaushikmak/GOPROJECTS/tree/main/TaskTracker" target="_blank" class="github-btn">View on GitHub</a></li>
         </ul>
     </nav>
@@ -85,6 +85,35 @@
             <div class="card">
                 <h3>Go Efficiency</h3>
                 <p>Compiled to a native binary for rapid execution without the overhead of an interpreter.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="live-demo" class="container">
+        <h2>See it in Action</h2>
+        <p class="subtitle" style="margin-bottom: 1.5rem;">Experience the workflow before you install.</p>
+        
+        <div class="demo-controls">
+            <button class="demo-btn active" onclick="manualDemo('add')">Add Task</button>
+            <button class="demo-btn" onclick="manualDemo('list')">List All</button>
+            <button class="demo-btn" onclick="manualDemo('update')">Update</button>
+            <button class="demo-btn" onclick="manualDemo('mark')">Mark Status</button>
+            <button class="demo-btn" onclick="manualDemo('delete')">Delete</button>
+        </div>
+
+        <div class="terminal-window demo-terminal">
+            <div class="terminal-header">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+                <span class="terminal-title">task-cli — demo</span>
+            </div>
+            
+            <div class="terminal-body" id="demo-content">
+                <div class="line">
+                    <span class="prompt">user@dev:~$</span> 
+                    <span id="typewriter-text"></span><span class="cursor-blink">_</span>
+                </div>
             </div>
         </div>
     </section>
@@ -157,41 +186,6 @@
 
             </div>
         </div>
-    </section>
-
-    <section id="usage" class="container">
-        <h2>Command Reference</h2>
-        <table class="command-table">
-            <thead>
-                <tr>
-                    <th>Action</th>
-                    <th>Command</th>
-                    <th>Description</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Add</td>
-                    <td><code>add "Task Description"</code></td>
-                    <td>Creates a new task with unique ID.</td>
-                </tr>
-                <tr>
-                    <td>List</td>
-                    <td><code>list</code></td>
-                    <td>Displays all current tasks.</td>
-                </tr>
-                <tr>
-                    <td>Update</td>
-                    <td><code>update [id] "New Text"</code></td>
-                    <td>Modifies the description of a task.</td>
-                </tr>
-                <tr>
-                    <td>Delete</td>
-                    <td><code>delete [id]</code></td>
-                    <td>Permanently removes a task.</td>
-                </tr>
-            </tbody>
-        </table>
     </section>
 
     <footer>
