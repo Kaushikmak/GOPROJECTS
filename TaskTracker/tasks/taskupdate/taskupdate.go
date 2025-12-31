@@ -3,6 +3,7 @@ package taskupdate
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -10,15 +11,13 @@ import (
 	"github.com/kaushikmak/go-projects/TaskTracker/utility/fileio"
 )
 
-
 func Update(args []string) {
-	// validate args
 	if len(args) < 4 {
-		fmt.Fprintln(os.Stderr, "Error: task id and new description required")
+		fmt.Fprintln(os.Stderr, "Error: task id (or alias) and new description required")
 		return
 	}
 
-	id := args[2]
+	idOrAlias := args[2]
 	newDesc := strings.Join(args[3:], " ")
 	if newDesc == "" {
 		fmt.Fprintln(os.Stderr, "Error: empty description")
@@ -37,13 +36,12 @@ func Update(args []string) {
 		return
 	}
 
-	index := findTaskIndex(tasks, id)
+	index := findTaskIndex(tasks, idOrAlias)
 	if index == -1 {
-		fmt.Fprintf(os.Stderr, "Task not found: %s\n", id)
+		fmt.Fprintf(os.Stderr, "Task not found: %s\n", idOrAlias)
 		return
 	}
 
-	// update task
 	tasks[index].Description = newDesc
 	tasks[index].UpdatedAt = time.Now()
 
@@ -52,16 +50,24 @@ func Update(args []string) {
 		return
 	}
 
-	fmt.Println("Task updated:", id)
+	fmt.Println("Task updated:", tasks[index].Id)
 }
 
+// findTaskIndex handles both "1" (Alias) and "a1b2..." (UUID)
+func findTaskIndex(tasks []models.Task, input string) int {
+	// 1. Try to parse as Integer Alias (1, 2, 3...)
+	if idx, err := strconv.Atoi(input); err == nil {
+		realIndex := idx - 1 // Convert 1-based to 0-based
+		if realIndex >= 0 && realIndex < len(tasks) {
+			return realIndex
+		}
+	}
 
-func findTaskIndex(tasks []models.Task, shortID string) int {
+	// 2. Fallback: Search by UUID Prefix
 	for i, t := range tasks {
-		if len(t.Id.String()) >= 8 && t.Id.String()[:8] == shortID {
+		if strings.HasPrefix(t.Id.String(), input) {
 			return i
 		}
 	}
 	return -1
 }
-

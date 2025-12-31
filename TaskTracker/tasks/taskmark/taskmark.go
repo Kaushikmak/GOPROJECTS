@@ -3,21 +3,21 @@ package taskmark
 import (
 	"fmt"
 	"os"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/kaushikmak/go-projects/TaskTracker/models"
 	"github.com/kaushikmak/go-projects/TaskTracker/utility/fileio"
 )
 
-
 func Mark(args []string) {
 	if len(args) < 4 {
-		fmt.Fprintln(os.Stderr, "Usage: task-cli mark <id> <status>")
+		fmt.Fprintln(os.Stderr, "Usage: task-cli mark <id|alias> <status>")
 		return
 	}
 
-	id := args[2]
-
+	idOrAlias := args[2]
 	status := models.StringToStatus(args[3])
 	if status == models.UNKNOWN {
 		fmt.Fprintf(os.Stderr, "Invalid status: %s\n", args[3])
@@ -36,13 +36,12 @@ func Mark(args []string) {
 		return
 	}
 
-	index := findTaskIndex(tasks, id)
+	index := findTaskIndex(tasks, idOrAlias)
 	if index == -1 {
-		fmt.Fprintf(os.Stderr, "Task not found: %s\n", id)
+		fmt.Fprintf(os.Stderr, "Task not found: %s\n", idOrAlias)
 		return
 	}
 
-	// mutate
 	tasks[index].Status = status
 	tasks[index].UpdatedAt = time.Now()
 
@@ -51,16 +50,20 @@ func Mark(args []string) {
 		return
 	}
 
-	fmt.Printf("Task %s marked as %s\n", id, status.String())
+	fmt.Printf("Task marked as %s\n", status.String())
 }
 
-
-func findTaskIndex(tasks []models.Task, shortID string) int {
+func findTaskIndex(tasks []models.Task, input string) int {
+	if idx, err := strconv.Atoi(input); err == nil {
+		realIndex := idx - 1
+		if realIndex >= 0 && realIndex < len(tasks) {
+			return realIndex
+		}
+	}
 	for i, t := range tasks {
-		if len(t.Id.String()) >= 8 && t.Id.String()[:8] == shortID {
+		if strings.HasPrefix(t.Id.String(), input) {
 			return i
 		}
 	}
 	return -1
 }
-
