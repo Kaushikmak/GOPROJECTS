@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskTracker CLI - Go Implementation</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">TaskTracker<span class="cursor">_</span></div>
+        <ul class="nav-links">
+            <li><a href="#features">Features</a></li>
+            <li><a href="#installation">Installation</a></li>
+            <li><a href="#usage">Usage</a></li>
+            <li><a href="https://github.com/Kaushikmak/GOPROJECTS/tree/main/TaskTracker" target="_blank" class="github-btn">View on GitHub</a></li>
+        </ul>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-content">
+            <h1>Effortless Task Management in Your Terminal</h1>
+            <p class="subtitle">A lightweight, high-performance CLI tool built with Golang.</p>
+            
+            <div class="download-container">
+                <div class="button-group">
+                    <a href="https://github.com/Kaushikmak/GOPROJECTS/releases/download/tasktracker-v1.0.0/task-cli" class="download-btn linux">
+                        Linux (64-bit)
+                    </a>
+                    <a href="https://github.com/Kaushikmak/GOPROJECTS/releases/download/tasktracker-v1.0.0/task-cli.exe" class="download-btn windows">
+                        Windows (x64)
+                    </a>
+                    <a href="https://github.com/Kaushikmak/GOPROJECTS/releases/download/tasktracker-v1.0.0/taskcli" class="download-btn macos">
+                        macOS (ARM64)
+                    </a>
+                </div>
+                <p class="note">v1.0.0 | Standalone Binary | No Go compiler required</p>
+            </div>
+
+            <div class="command-box">
+                <span class="prompt">$</span>
+                <code id="clone-command">git clone https://github.com/Kaushikmak/GOPROJECTS.git</code>
+                <button onclick="copyCommand()" class="copy-btn" id="copyBtn">Copy</button>
+            </div>
+        </div>
+    </header>
+
+    <section id="features" class="container">
+        <h2>Core Capabilities</h2>
+        <div class="grid">
+            <div class="card">
+                <h3>JSON Persistence</h3>
+                <p>Tasks are serialized and stored locally in JSON format, ensuring data persistence across sessions.</p>
+            </div>
+            <div class="card">
+                <h3>CRUD Operations</h3>
+                <p>Full support for Create, Read, Update, and Delete operations directly from the command line.</p>
+            </div>
+            <div class="card">
+                <h3>Status Tracking</h3>
+                <p>Mark tasks as 'todo', 'in-progress', or 'done' to effectively monitor workflow status.</p>
+            </div>
+            <div class="card">
+                <h3>Go Efficiency</h3>
+                <p>Compiled to a native binary for rapid execution without the overhead of an interpreter.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="installation" class="container">
+        <h2>Installation & Setup</h2>
+        
+        <div class="install-tabs">
+            <button class="tab-btn active" onclick="switchOS('linux')">Linux</button>
+            <button class="tab-btn" onclick="switchOS('windows')">Windows</button>
+            <button class="tab-btn" onclick="switchOS('mac')">macOS</button>
+            <button class="tab-btn" onclick="switchOS('source')">Source</button>
+        </div>
+
+        <div class="terminal-window">
+            <div class="terminal-header">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+                <span class="terminal-title" id="term-title">bash — linux</span>
+            </div>
+            
+            <div class="terminal-body">
+                
+                <div id="install-linux" class="install-content active">
+                    <div class="line"><span class="comment"># 1. Open Terminal & go to downloads</span></div>
+                    <div class="line"><span class="prompt">user@linux:~$</span> cd ~/Downloads</div>
+                    <br>
+                    <div class="line"><span class="comment"># 2. Make executable & Install Global</span></div>
+                    <div class="line"><span class="prompt">user@linux:~/Downloads$</span> chmod +x task-cli</div>
+                    <div class="line"><span class="prompt">user@linux:~/Downloads$</span> sudo mv task-cli /usr/local/bin/</div>
+                    <br>
+                    <div class="line"><span class="comment"># 3. Run from anywhere!</span></div>
+                    <div class="line"><span class="prompt">user@linux:~$</span> task-cli list</div>
+                </div>
+
+                <div id="install-windows" class="install-content">
+                    <div class="line"><span class="comment"># PowerShell</span></div>
+                    <div class="line"><span class="prompt">PS C:\Users\User></span> cd Downloads</div>
+                    <br>
+                    <div class="line"><span class="comment"># Organized Setup (Optional)</span></div>
+                    <div class="line"><span class="prompt">PS ...\Downloads></span> New-Item -ItemType Directory -Path C:\Tools -Force</div>
+                    <div class="line"><span class="prompt">PS ...\Downloads></span> Move-Item task-cli.exe C:\Tools</div>
+                    <br>
+                    <div class="line"><span class="comment"># Add 'C:\Tools' to your Environment PATH to run globally</span></div>
+                    <div class="line"><span class="prompt">PS C:\></span> task-cli add "Setup complete"</div>
+                </div>
+
+                <div id="install-mac" class="install-content">
+                    <div class="line"><span class="comment"># 1. Navigate to Downloads</span></div>
+                    <div class="line"><span class="prompt">user@mac:~$</span> cd ~/Downloads</div>
+                    <br>
+                    <div class="line"><span class="comment"># 2. Fix permissions & Rename to Standard</span></div>
+                    <div class="line"><span class="prompt">user@mac:~/Downloads$</span> chmod +x taskcli</div>
+                    <div class="line"><span class="prompt">user@mac:~/Downloads$</span> sudo mv taskcli /usr/local/bin/task-cli</div>
+                    <br>
+                    <div class="line"><span class="comment"># 3. Run from anywhere</span></div>
+                    <div class="line"><span class="prompt">user@mac:~$</span> task-cli list</div>
+                </div>
+
+                <div id="install-source" class="install-content">
+                    <div class="line"><span class="comment"># Requires Go 1.22+ installed</span></div>
+                    <div class="line"><span class="prompt">user@dev:~$</span> git clone https://github.com/Kaushikmak/GOPROJECTS.git</div>
+                    <div class="line"><span class="prompt">user@dev:~$</span> cd GOPROJECTS/TaskTracker</div>
+                    <br>
+                    <div class="line"><span class="comment"># Install to GOBIN (usually in PATH)</span></div>
+                    <div class="line"><span class="prompt">user@dev:~/TaskTracker$</span> go install</div>
+                    <div class="line"><span class="prompt">user@dev:~/TaskTracker$</span> task-cli list</div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="usage" class="container">
+        <h2>Command Reference</h2>
+        <table class="command-table">
+            <thead>
+                <tr>
+                    <th>Action</th>
+                    <th>Command</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Add</td>
+                    <td><code>add "Task Description"</code></td>
+                    <td>Creates a new task with unique ID.</td>
+                </tr>
+                <tr>
+                    <td>List</td>
+                    <td><code>list</code></td>
+                    <td>Displays all current tasks.</td>
+                </tr>
+                <tr>
+                    <td>Update</td>
+                    <td><code>update [id] "New Text"</code></td>
+                    <td>Modifies the description of a task.</td>
+                </tr>
+                <tr>
+                    <td>Delete</td>
+                    <td><code>delete [id]</code></td>
+                    <td>Permanently removes a task.</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <footer>
+        <p>Developed by <a href="https://github.com/Kaushikmak">Kaushikmak</a> | Hosted on GitHub</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
