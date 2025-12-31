@@ -16,31 +16,28 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Required to push changes back to main
 
       - name: Setup Go
         uses: actions/setup-go@v4
         with:
           go-version: '1.22'
 
-      # --- LINUX BUILD (Name: task-cli) ---
+      # --- BUILD STEPS ---
       - name: Build Linux
         working-directory: ./TaskTracker
-        run: |
-          GOOS=linux GOARCH=amd64 go build -o task-cli task-cli.go
+        run: GOOS=linux GOARCH=amd64 go build -o task-cli task-cli.go
 
-      # --- WINDOWS BUILD (Name: task-cli.exe) ---
       - name: Build Windows
         working-directory: ./TaskTracker
-        run: |
-          GOOS=windows GOARCH=amd64 go build -o task-cli.exe task-cli.go
+        run: GOOS=windows GOARCH=amd64 go build -o task-cli.exe task-cli.go
 
-      # --- MACOS BUILD (Name: taskcli) ---
       - name: Build macOS
         working-directory: ./TaskTracker
-        run: |
-          GOOS=darwin GOARCH=arm64 go build -o taskcli task-cli.go
+        run: GOOS=darwin GOARCH=arm64 go build -o taskcli task-cli.go
 
-      # --- UPLOAD RAW BINARIES ---
+      # --- RELEASE STEPS ---
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
@@ -50,3 +47,36 @@ jobs:
             TaskTracker/taskcli
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # --- WEBSITE AUTOMATION STEP ---
+      - name: Update Website Links
+        run: |
+          # 1. Configure Git to commit as a bot
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'actions@github.com'
+
+          # 2. Switch to main branch
+          git checkout main
+          git pull origin main
+
+          # 3. Define Version Variables
+          # TAG_NAME = "tasktracker-v1.0.2"
+          TAG_NAME=${{ github.ref_name }}
+          # VERSION = "v1.0.2" (Removes the 'tasktracker-' prefix)
+          VERSION=${TAG_NAME#tasktracker-}
+
+          # 4. Update Links in HTML using 'sed'
+          # This regex finds the old download link pattern and swaps in the new TAG_NAME
+          sed -i "s|releases/download/tasktracker-v[0-9.]*|releases/download/$TAG_NAME|g" TaskTracker/web/index.html
+          
+          # This updates the visible text like "v1.0.0 | Standalone"
+          sed -i "s|class=\"note\">v[0-9.]* |class=\"note\">$VERSION |g" TaskTracker/web/index.html
+
+          # 5. Commit and Push (Only if there are changes)
+          if [[ -n $(git status -s) ]]; then
+            git add TaskTracker/web/index.html
+            git commit -m "Auto-update website links to $VERSION"
+            git push origin main
+          else
+            echo "No changes to website needed."
+          fi
