@@ -3,7 +3,6 @@ package add
 import (
 	"fmt"
 	"os"
-
 	"strings"
 	"time"
 
@@ -13,27 +12,26 @@ import (
 )
 
 func Add(taskDescription []string) {
-	    
-    path,err := fileio.EnsureStorage()
-    if err != nil{
-        fmt.Fprintln(os.Stderr,err)
-        return
-    }
 
-    tasks, err := fileio.Load(path)
-    if err != nil {
-        fmt.Fprintln(os.Stderr,err)
-        return
-    }
+	path, err := fileio.EnsureStorage()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		return
+	}
 
-    // get task as string
+	tasks, err := fileio.Load(path)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		return
+	}
+
+	// get task as string
 	taskDesc := strings.Join(taskDescription[2:], " ")
 	if taskDesc == "" {
 		fmt.Fprintf(os.Stderr, "Error!, trying to add empty task")
 		return
 	}
 
-    
 	task := models.Task{
 		Id:          uuid.New(),
 		Description: taskDesc,
@@ -42,10 +40,12 @@ func Add(taskDescription []string) {
 		UpdatedAt:   time.Now(),
 	}
 
-    tasks = append(tasks, task)
-    
-    if err := fileio.Save(path,tasks); err != nil {
-        fmt.Fprintln(os.Stderr,err)
-        return
-    }
+	tasks = append(tasks, task)
+
+	if err := fileio.Save(path, tasks); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		return
+	}
+
+	fmt.Printf("Task added successfully (ID: %d)\n", len(tasks))
 }

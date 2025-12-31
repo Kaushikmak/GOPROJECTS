@@ -11,6 +11,7 @@ import (
 )
 
 func Delete(args []string) {
+	// validate args
 	if len(args) < 3 {
 		fmt.Fprintln(os.Stderr, "Error: task id (or alias) required")
 		return
@@ -36,6 +37,7 @@ func Delete(args []string) {
 		return
 	}
 
+	// remove task
 	tasks = append(tasks[:index], tasks[index+1:]...)
 
 	if err := fileio.Save(path, tasks); err != nil {
@@ -43,7 +45,8 @@ func Delete(args []string) {
 		return
 	}
 
-	fmt.Println("Task deleted")
+	// NEW: Confirmation
+	fmt.Printf("Task %s deleted successfully\n", idOrAlias)
 }
 
 func findTaskIndex(tasks []models.Task, input string) int {

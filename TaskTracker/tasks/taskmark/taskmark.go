@@ -18,6 +18,7 @@ func Mark(args []string) {
 	}
 
 	idOrAlias := args[2]
+
 	status := models.StringToStatus(args[3])
 	if status == models.UNKNOWN {
 		fmt.Fprintf(os.Stderr, "Invalid status: %s\n", args[3])
@@ -42,6 +43,7 @@ func Mark(args []string) {
 		return
 	}
 
+	// mutate
 	tasks[index].Status = status
 	tasks[index].UpdatedAt = time.Now()
 
@@ -50,7 +52,8 @@ func Mark(args []string) {
 		return
 	}
 
-	fmt.Printf("Task marked as %s\n", status.String())
+	// NEW: Confirmation
+	fmt.Printf("Task %s marked as %s\n", idOrAlias, status.String())
 }
 
 func findTaskIndex(tasks []models.Task, input string) int {

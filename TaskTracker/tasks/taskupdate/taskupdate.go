@@ -12,6 +12,7 @@ import (
 )
 
 func Update(args []string) {
+	// validate args
 	if len(args) < 4 {
 		fmt.Fprintln(os.Stderr, "Error: task id (or alias) and new description required")
 		return
@@ -42,6 +43,7 @@ func Update(args []string) {
 		return
 	}
 
+	// update task
 	tasks[index].Description = newDesc
 	tasks[index].UpdatedAt = time.Now()
 
@@ -50,7 +52,8 @@ func Update(args []string) {
 		return
 	}
 
-	fmt.Println("Task updated:", tasks[index].Id)
+	// NEW: Better Confirmation
+	fmt.Printf("Task %s updated successfully\n", idOrAlias)
 }
 
 // findTaskIndex handles both "1" (Alias) and "a1b2..." (UUID)
