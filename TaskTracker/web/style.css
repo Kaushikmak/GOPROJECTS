@@ -1,4 +1,4 @@
-/* CSS Variables for Theming */
+/* --- CSS Variables & Theming --- */
 :root {
     --bg-color: #0d1117; /* GitHub Dark Dimmed */
     --card-bg: #161b22;
@@ -16,15 +16,18 @@
     box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     background-color: var(--bg-color);
     color: var(--text-primary);
     font-family: var(--font-sans);
     line-height: 1.6;
-    scroll-behavior: smooth;
 }
 
-/* Typography & Links */
+/* --- Typography & Links --- */
 h1, h2, h3 {
     color: var(--text-primary);
     margin-bottom: 1rem;
@@ -33,19 +36,19 @@ h1, h2, h3 {
 a {
     text-decoration: none;
     color: inherit;
-    transition: color 0.2s;
+    transition: color 0.2s ease;
 }
 
 a:hover {
     color: var(--accent);
 }
 
-/* Navbar */
+/* --- Navbar --- */
 .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.5rem 5%;
+    padding: 1.2rem 5%;
     background-color: var(--card-bg);
     border-bottom: 1px solid #30363d;
     position: sticky;
@@ -53,14 +56,28 @@ a:hover {
     z-index: 1000;
 }
 
-.logo {
+/* Logo Styles */
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.nav-logo-icon {
+    height: 24px;
+    width: 24px;
+}
+
+.logo-text {
     font-family: var(--font-mono);
-    font-size: 1.5rem;
-    font-weight: bold;
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
 }
 
 .cursor {
     animation: blink 1s step-end infinite;
+    color: var(--accent);
 }
 
 @keyframes blink {
@@ -74,8 +91,9 @@ a:hover {
     align-items: center;
 }
 
-.nav-links li a:hover {
-    color: var(--accent);
+.nav-links li a {
+    font-size: 0.95rem;
+    font-weight: 500;
 }
 
 .github-btn {
@@ -84,14 +102,14 @@ a:hover {
     border-radius: 6px;
     font-weight: 600;
     color: #fff !important;
-    transition: background-color 0.2s;
+    transition: background-color 0.2s ease;
 }
 
 .github-btn:hover {
     background-color: var(--accent-hover);
 }
 
-/* Hero Section */
+/* --- Hero Section --- */
 .hero {
     text-align: center;
     padding: 6rem 1rem 4rem;
@@ -102,6 +120,7 @@ a:hover {
     max-width: 800px;
     margin: 0 auto 1rem;
     line-height: 1.2;
+    letter-spacing: -1px;
 }
 
 .subtitle {
@@ -110,7 +129,7 @@ a:hover {
     margin-bottom: 2.5rem;
 }
 
-/* Download Buttons Styles */
+/* --- Download Buttons --- */
 .download-container {
     margin: 0 auto 2.5rem;
     text-align: center;
@@ -131,7 +150,7 @@ a:hover {
     border-radius: 6px;
     font-weight: 600;
     color: #fff !important;
-    transition: transform 0.2s, filter 0.2s;
+    transition: transform 0.2s ease, filter 0.2s ease;
     font-family: var(--font-sans);
 }
 
@@ -140,9 +159,9 @@ a:hover {
     filter: brightness(1.1);
 }
 
-.linux { background-color: #E95420; } /* Ubuntu Orange */
-.windows { background-color: #0078D7; } /* Windows Blue */
-.macos { background-color: #444444; } /* Apple Dark Grey */
+.linux { background-color: #E95420; }
+.windows { background-color: #0078D7; }
+.macos { background-color: #444444; }
 
 .note {
     font-size: 0.85rem;
@@ -150,7 +169,7 @@ a:hover {
     font-family: var(--font-mono);
 }
 
-/* Command Box (Git Clone) */
+/* --- Command Box (Git Clone) --- */
 .command-box {
     background-color: var(--card-bg);
     border: 1px solid #30363d;
@@ -168,57 +187,68 @@ a:hover {
 
 .copy-btn {
     background-color: #30363d;
-    border: none;
+    border: 1px solid #30363d;
     color: var(--text-primary);
-    padding: 0.3rem 0.8rem;
+    padding: 0.4rem 0.8rem;
     border-radius: 4px;
     cursor: pointer;
     font-size: 0.9rem;
     font-family: var(--font-sans);
-    transition: background-color 0.2s;
+    font-weight: 500;
+    transition: all 0.2s ease;
 }
 
 .copy-btn:hover {
     background-color: #484f58;
+    border-color: #8b949e;
 }
 
-/* Container & Grid */
+/* --- Container & Grid --- */
 .container {
     padding: 4rem 5%;
-    max-width: 1200px;
+    max-width: 1100px;
     margin: 0 auto;
+}
+
+h2 {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 2.5rem;
 }
 
 .grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
+    gap: 1.5rem;
 }
 
 .card {
     background-color: var(--card-bg);
     padding: 2rem;
-    border-radius: 8px;
+    border-radius: 12px;
     border: 1px solid #30363d;
-    transition: transform 0.2s;
+    transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
 .card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-4px);
     border-color: var(--accent);
 }
 
 .card h3 {
     font-family: var(--font-mono);
     color: var(--accent);
+    font-size: 1.1rem;
 }
 
-/* Installation Tabs */
+/* --- Installation Tabs --- */
 .install-tabs {
     display: flex;
     gap: 0.5rem;
     margin-bottom: -1px;
     padding-left: 0.5rem;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
 .tab-btn {
@@ -226,7 +256,7 @@ a:hover {
     border: 1px solid #30363d;
     border-bottom: none;
     color: var(--text-secondary);
-    padding: 0.5rem 1.5rem;
+    padding: 0.6rem 1.5rem;
     cursor: pointer;
     border-radius: 6px 6px 0 0;
     font-family: var(--font-mono);
@@ -245,14 +275,16 @@ a:hover {
     border-color: var(--accent);
 }
 
-/* Terminal Simulation */
+/* --- Terminal Simulation --- */
 .terminal-window {
     background-color: #0d1117;
-    border-radius: 8px;
+    border-radius: 12px;
     border: 1px solid #30363d;
     font-family: var(--font-mono);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    min-height: 250px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    min-height: 280px;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
 .terminal-header {
@@ -262,13 +294,14 @@ a:hover {
     gap: 0.6rem;
     border-bottom: 1px solid #30363d;
     align-items: center;
+    border-radius: 12px 12px 0 0;
 }
 
 .terminal-title {
     color: var(--text-secondary);
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     margin-left: auto;
-    opacity: 0.7;
+    opacity: 0.8;
 }
 
 .dot { width: 12px; height: 12px; border-radius: 50%; }
@@ -279,13 +312,13 @@ a:hover {
 .terminal-body {
     padding: 1.5rem;
     color: #fff;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
 }
 
 /* Toggle Logic */
 .install-content {
     display: none;
-    animation: fadeIn 0.3s ease-in-out;
+    animation: fadeIn 0.2s ease-in-out;
 }
 
 .install-content.active {
@@ -297,15 +330,16 @@ a:hover {
     to { opacity: 1; transform: translateY(0); }
 }
 
-.line { margin-bottom: 0.5rem; word-break: break-all; }
+.line { margin-bottom: 0.6rem; word-break: break-all; }
 .output { color: var(--text-secondary); }
 
-/* Table */
+/* --- Command Table --- */
 .command-table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     background-color: var(--card-bg);
-    border-radius: 8px;
+    border-radius: 12px;
     overflow: hidden;
     border: 1px solid #30363d;
 }
@@ -319,6 +353,9 @@ a:hover {
 .command-table th {
     background-color: #21262d;
     font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .command-table tr:last-child td {
@@ -326,24 +363,26 @@ a:hover {
 }
 
 .command-table code {
-    background-color: rgba(110, 118, 129, 0.4);
-    padding: 0.2rem 0.4rem;
-    border-radius: 4px;
+    background-color: rgba(110, 118, 129, 0.2);
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
     font-family: var(--font-mono);
     color: #fff;
+    border: 1px solid #30363d;
 }
 
-/* Footer */
+/* --- Footer --- */
 footer {
     text-align: center;
-    padding: 2rem;
+    padding: 3rem 2rem;
     color: var(--text-secondary);
     border-top: 1px solid #30363d;
     margin-top: 4rem;
     background-color: var(--card-bg);
+    font-size: 0.9rem;
 }
 
-/* Mobile Responsiveness */
+/* --- Mobile Responsiveness --- */
 @media (max-width: 768px) {
     .navbar {
         flex-direction: column;
@@ -352,17 +391,21 @@ footer {
     }
 
     .nav-links {
-        gap: 1rem;
+        gap: 0.8rem;
         flex-wrap: wrap;
         justify-content: center;
     }
 
-    .hero h1 { font-size: 2rem; }
+    .hero h1 { font-size: 2.2rem; }
 
     .command-box {
         flex-direction: column;
-        gap: 0.5rem;
+        gap: 0.8rem;
         width: 100%;
+    }
+
+    #clone-command {
+        font-size: 0.85rem;
     }
     
     .install-tabs {
@@ -372,7 +415,15 @@ footer {
     .tab-btn {
         flex: 1 1 auto;
         text-align: center;
-        border-radius: 6px;
         border-bottom: 1px solid #30363d;
+    }
+    
+    .container {
+        padding: 3rem 1rem;
+    }
+    
+    .command-table {
+        display: block;
+        overflow-x: auto;
     }
 }

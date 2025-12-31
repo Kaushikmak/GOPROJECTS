@@ -3,14 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TaskTracker CLI - Go Implementation</title>
+    
+    <title>Task CLI </title>
+    <meta name="description" content="A lightweight, high-performance CLI task management tool built with Golang. Manage tasks directly from your terminal with simple commands.">
+    <meta name="keywords" content="cli, golang, task manager, productivity, terminal tool, open source">
+    <meta name="author" content="Kaushikmak">
+
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23238636%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><polyline points=%224 17 10 11 4 5%22></polyline><line x1=%2212%22 y1=%2219%22 x2=%2220%22 y2=%2219%22></line><path d=%22M15 11l2 2 4-4%22 stroke=%22%23238636%22 stroke-width=%222.5%22/></svg>">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://task-cli.in/">
+    <meta property="og:title" content="TaskTracker CLI - Effortless Terminal Task Management">
+    <meta property="og:description" content="A lightweight, high-performance CLI task management tool built with Golang. Download the standalone binary today.">
+    <meta property="og:image" content="https://task-cli.in/banner-image.png">
+
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://task-cli.in/">
+    <meta property="twitter:title" content="TaskTracker CLI - Effortless Terminal Task Management">
+    <meta property="twitter:description" content="A lightweight, high-performance CLI task management tool built with Golang.">
+    <meta property="twitter:image" content="https://task-cli.in/banner-image.png">
+
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
 
     <nav class="navbar">
-        <div class="logo">TaskTracker<span class="cursor">_</span></div>
+        <div class="logo-container">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-logo-icon">
+                <polyline points="4 17 10 11 4 5"></polyline>
+                <line x1="12" y1="19" x2="20" y2="19"></line>
+                <path d="M15 11l2 2 4-4" stroke="var(--accent)" stroke-width="2.5"/>
+            </svg>
+            <span class="logo-text">TaskTracker<span class="cursor">_</span></span>
+        </div>
         <ul class="nav-links">
             <li><a href="#features">Features</a></li>
             <li><a href="#installation">Installation</a></li>
@@ -26,15 +52,9 @@
             
             <div class="download-container">
                 <div class="button-group">
-                    <a href="https://github.com/Kaushikmak/GOPROJECTS/releases/download/tasktracker-v1.0.0/task-cli" class="download-btn linux">
-                        Linux (64-bit)
-                    </a>
-                    <a href="https://github.com/Kaushikmak/GOPROJECTS/releases/download/tasktracker-v1.0.0/task-cli.exe" class="download-btn windows">
-                        Windows (x64)
-                    </a>
-                    <a href="https://github.com/Kaushikmak/GOPROJECTS/releases/download/tasktracker-v1.0.0/taskcli" class="download-btn macos">
-                        macOS (ARM64)
-                    </a>
+                    <a href="https://github.com/Kaushikmak/GOPROJECTS/releases/download/tasktracker-v1.0.0/task-cli" class="download-btn linux">Linux (64-bit)</a>
+                    <a href="https://github.com/Kaushikmak/GOPROJECTS/releases/download/tasktracker-v1.0.0/task-cli.exe" class="download-btn windows">Windows (x64)</a>
+                    <a href="https://github.com/Kaushikmak/GOPROJECTS/releases/download/tasktracker-v1.0.0/taskcli" class="download-btn macos">macOS (ARM64)</a>
                 </div>
                 <p class="note">v1.0.0 | Standalone Binary | No Go compiler required</p>
             </div>
@@ -93,11 +113,11 @@
                     <div class="line"><span class="comment"># 1. Open Terminal & go to downloads</span></div>
                     <div class="line"><span class="prompt">user@linux:~$</span> cd ~/Downloads</div>
                     <br>
-                    <div class="line"><span class="comment"># 2. Make executable & Install Global</span></div>
+                    <div class="line"><span class="comment"># 2. Make executable & move to Global path</span></div>
                     <div class="line"><span class="prompt">user@linux:~/Downloads$</span> chmod +x task-cli</div>
                     <div class="line"><span class="prompt">user@linux:~/Downloads$</span> sudo mv task-cli /usr/local/bin/</div>
                     <br>
-                    <div class="line"><span class="comment"># 3. Run from anywhere!</span></div>
+                    <div class="line"><span class="comment"># 3. Run from anywhere</span></div>
                     <div class="line"><span class="prompt">user@linux:~$</span> task-cli list</div>
                 </div>
 
@@ -117,7 +137,7 @@
                     <div class="line"><span class="comment"># 1. Navigate to Downloads</span></div>
                     <div class="line"><span class="prompt">user@mac:~$</span> cd ~/Downloads</div>
                     <br>
-                    <div class="line"><span class="comment"># 2. Fix permissions & Rename to Standard</span></div>
+                    <div class="line"><span class="comment"># 2. Fix permissions & move to Global path</span></div>
                     <div class="line"><span class="prompt">user@mac:~/Downloads$</span> chmod +x taskcli</div>
                     <div class="line"><span class="prompt">user@mac:~/Downloads$</span> sudo mv taskcli /usr/local/bin/task-cli</div>
                     <br>
@@ -175,7 +195,7 @@
     </section>
 
     <footer>
-        <p>Developed by <a href="https://github.com/Kaushikmak">Kaushikmak</a> | Hosted on GitHub</p>
+        <p>Developed by <a href="https://github.com/Kaushikmak" target="_blank">Kaushikmak</a> | Hosted on GitHub</p>
     </footer>
 
     <script src="script.js"></script>

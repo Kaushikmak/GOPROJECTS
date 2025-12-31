@@ -1,47 +1,40 @@
-/**
- * Copies the installation command to the system clipboard.
- */
+// Copies the git clone command to clipboard with visual feedback.
 function copyCommand() {
     const commandText = document.getElementById("clone-command").innerText;
     const copyBtn = document.getElementById("copyBtn");
+    const originalText = copyBtn.innerText;
 
     navigator.clipboard.writeText(commandText).then(() => {
-        const originalText = copyBtn.innerText;
         copyBtn.innerText = "Copied!";
         copyBtn.style.backgroundColor = "var(--accent)";
         copyBtn.style.color = "#fff";
+        copyBtn.style.borderColor = "var(--accent)";
         
         setTimeout(() => {
             copyBtn.innerText = originalText;
             copyBtn.style.backgroundColor = ""; 
             copyBtn.style.color = "";
+            copyBtn.style.borderColor = "";
         }, 2000);
     }).catch(err => {
         console.error('Failed to copy text: ', err);
     });
 }
 
-/**
- * Switches the displayed installation instructions based on OS selection.
- */
+// Handles switching between OS installation tabs.
 function switchOS(os) {
-    // 1. Hide all content
+    // Hide all content & deactivate buttons
     document.querySelectorAll('.install-content').forEach(c => c.classList.remove('active'));
-
-    // 2. Deactivate all buttons
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
 
-    // 3. Show selected content
+    // Show selected content & activate button
     document.getElementById(`install-${os}`).classList.add('active');
+    
+    // Map OS to button index
+    const indexMap = { 'linux': 0, 'windows': 1, 'mac': 2, 'source': 3 };
+    document.querySelectorAll('.tab-btn')[indexMap[os]].classList.add('active');
 
-    // 4. Activate selected button
-    const buttons = document.querySelectorAll('.tab-btn');
-    if (os === 'linux') buttons[0].classList.add('active');
-    if (os === 'windows') buttons[1].classList.add('active');
-    if (os === 'mac') buttons[2].classList.add('active');
-    if (os === 'source') buttons[3].classList.add('active');
-
-    // 5. Update Terminal Title
+    // Update Terminal Title
     const titles = {
         'linux': 'bash — linux',
         'windows': 'powershell — administrator',
@@ -50,5 +43,3 @@ function switchOS(os) {
     };
     document.getElementById('term-title').innerText = titles[os];
 }
-
-console.log("TaskTracker Landing Page | Loaded Successfully");
