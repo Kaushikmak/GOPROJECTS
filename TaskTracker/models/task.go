@@ -9,7 +9,8 @@ import (
 // task
 type Task struct {
 	Id          uuid.UUID
-	Description string
+    Key         int         `json:"-"`
+    Description string
 	Status      TASKSTATUS
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
