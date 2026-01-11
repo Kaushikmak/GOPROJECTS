@@ -1,6 +1,8 @@
 # GOSHRT
 ### A High-Performance URL Shortener in Go
 
+**Live Demo:** [https://goshrt.vercel.app/](https://goshrt.vercel.app/)
+
 Goshrt is a high-performance, open-source URL shortener service designed to demonstrate low-latency request routing using Go and Redis. The system combines an efficient API backend with a minimal frontend interface, optimized for high throughput and low resource overhead.
 
 The project emphasizes performance, correctness, and simplicity, making it suitable both as a production-grade service and as a reference project for backend engineering in Go.
@@ -54,7 +56,7 @@ Goshrt provides:
 
 1.  Clone the repository:
     ```bash
-    git clone [https://github.com/kaushikmak/goshrt.git](https://github.com/kaushikmak/goshrt.git)
+    git clone https://github.com/kaushikmak/goshrt.git
     cd goshrt
     ```
 
@@ -98,7 +100,7 @@ Goshrt provides:
 **Request Body:**
 ```json
 {
-  "url": "[https://google.com](https://google.com)",
+  "url": "https://google.com",
   "customshortner": "goog",
   "expiry": "24h"
 }
