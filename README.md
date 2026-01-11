@@ -11,7 +11,7 @@ This repository operates as a **monorepo**. Each subdirectory contains a distinc
 | Project Name | Type | Description | Status |
 | :--- | :--- | :--- | :--- |
 | **[TaskTracker](./TaskTracker)** | CLI Tool | A lightweight, persistent command-line task manager supporting CRUD operations and JSON storage. | Active |
-| **[Goshrt](./Goshrt)** | Web Service | A high-performance URL shortener built with **Go Fiber** & **Redis**, featuring a Neobrutalist frontend and rate limiting. | Active |
+| **[Goshrt](./UrlShortner)** | Web Service | A high-performance URL shortener built with **Go Fiber** & **Redis**, featuring a Neobrutalist frontend and rate limiting. | Active |
 
 ---
 
