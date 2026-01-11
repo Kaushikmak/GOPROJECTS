@@ -49,8 +49,6 @@ func ShortnerURL(c fiber.Ctx) error {
 				"rate_limit_reset": limit / time.Nanosecond / time.Second,
 			})
 		}
-		redisDB_1.Decr(db.Ctx, c.IP())
-
 	}
 
 	// validate url
@@ -77,20 +75,38 @@ func ShortnerURL(c fiber.Ctx) error {
 	redisDB_0 := db.CreateClient(0)
 	defer redisDB_0.Close()
 
-	val, err = redisDB_0.Get(db.Ctx, id).Result()
-
-	if val != "" {
-		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "Custom shortner already in use"})
-	}
-
 	if body.Expiry == 0 {
-		body.Expiry = 24
+		body.Expiry = 24 * time.Hour
 	}
 
-	err = redisDB_0.Set(db.Ctx, id, body.URL, body.Expiry*time.Minute).Err()
+	success, err := redisDB_0.SetNX(db.Ctx, id, body.URL, body.Expiry).Result()
+
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "unable to connect to server"})
 	}
 
-	return nil
+	if !success {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "Custom shortner already in use"})
+	}
+
+	resp := response{
+		URL:             body.URL,
+		CustomShortner:  "",
+		Expiry:          body.Expiry,
+		XRateRemaining:  10,
+		XRateLimitReset: 30 * time.Minute,
+	}
+
+	redisDB_1.Decr(db.Ctx, c.IP())
+
+	val, _ = redisDB_1.Get(db.Ctx, c.IP()).Result()
+	resp.XRateRemaining, _ = strconv.Atoi(val)
+
+	ttl, _ := redisDB_1.TTL(db.Ctx, c.IP()).Result()
+
+	resp.XRateLimitReset = ttl / time.Nanosecond / time.Minute
+
+	resp.CustomShortner = os.Getenv("DOMAIN") + "/" + id
+
+	return c.Status(fiber.StatusOK).JSON(resp)
 }
