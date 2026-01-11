@@ -1,12 +1,10 @@
 // --- CONFIGURATION ---
-// const API_BASE = "http://16.171.231.55:3000/api/v1"; 
+// Use your Ngrok URL here
 const API_BASE = "https://kinematographic-supercolossally-hollie.ngrok-free.dev/api/v1";
 
 // --- THEME LOGIC ---
 const themeBtn = document.getElementById('theme-toggle');
 const body = document.body;
-
-// Check LocalStorage
 const savedTheme = localStorage.getItem('theme') || 'light'; 
 body.setAttribute('data-theme', savedTheme);
 updateThemeIcon(savedTheme);
@@ -80,7 +78,7 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// --- FORM SUBMISSION ---
+// --- FORM SUBMISSION (WITH ROBUST ERROR HANDLING) ---
 const form = document.getElementById('shorten-form');
 const submitBtn = document.getElementById('submitBtn');
 const resultArea = document.getElementById('result-area');
@@ -90,15 +88,19 @@ const copyBtn = document.getElementById('copyBtn');
 const openBtn = document.getElementById('openBtn');
 const latencyDisplay = document.getElementById('latencyDisplay');
 
+let errorTimeout;
+
 form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
+    // Reset UI
     const originalText = submitBtn.innerText;
     submitBtn.innerText = "PROCESSING...";
     submitBtn.disabled = true;
     resultArea.classList.add('hidden');
     errorArea.classList.add('hidden');
     suggestionsBox.classList.add('hidden');
+    if (errorTimeout) clearTimeout(errorTimeout);
 
     const payload = { 
         url: longUrlInput.value,
@@ -115,24 +117,69 @@ form.addEventListener('submit', async (e) => {
             body: JSON.stringify(payload)
         });
 
+        // --- 1. SAFE RESPONSE PARSING ---
+        // Check if the response is actually JSON before parsing
+        const contentType = response.headers.get("content-type");
+        let data = {};
+
+        if (contentType && contentType.includes("application/json")) {
+            data = await response.json();
+        } else {
+            // Server returned HTML/Text (e.g., 404 page or Nginx error)
+            // Log raw text for debugging, but throw a clean error for user
+            const text = await response.text();
+            console.error("Non-JSON Response received:", text);
+            throw new Error("INVALID_SERVER_RESPONSE");
+        }
+
+        // --- 2. HTTP STATUS HANDLING ---
+        if (!response.ok) {
+            let userMsg = "UNKNOWN_SYSTEM_ERROR";
+            
+            // Map status codes to "Neobrutalist" messages
+            switch (response.status) {
+                case 400: userMsg = "INVALID_INPUT_DETECTED"; break;
+                case 404: userMsg = "API_ENDPOINT_NOT_FOUND"; break;
+                case 409: userMsg = "ALIAS_ALREADY_TAKEN"; break; // Conflict
+                case 422: userMsg = "UNPROCESSABLE_ENTITY"; break;
+                case 429: userMsg = "RATE_LIMIT_EXCEEDED (WAIT)"; break;
+                case 500: userMsg = "INTERNAL_SERVER_ERROR"; break;
+                case 502: userMsg = "BAD_GATEWAY (SERVER_DOWN)"; break;
+                default: userMsg = data.error ? data.error.replace(/ /g, '_').toUpperCase() : `ERROR_${response.status}`;
+            }
+            throw new Error(userMsg);
+        }
+
+        // --- 3. SUCCESS ---
         const endTime = performance.now();
         const latency = (endTime - startTime).toFixed(0);
-
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.error || "SERVER_ERR");
 
         const fullShortLink = `http://${data.customshort}`;
         resultInput.value = fullShortLink;
         
         latencyDisplay.innerHTML = `${latency}ms`;
-        document.getElementById('rateLimit').textContent = data.rate_limit;
+        document.getElementById('rateLimit').textContent = data.rate_limit || "∞";
         
         saveToHistory(payload.url, fullShortLink);
         resultArea.classList.remove('hidden');
 
     } catch (err) {
-        errorArea.innerHTML = `[ERROR]: ${err.message.toUpperCase()}`;
+        // --- 4. NETWORK & GENERIC ERROR HANDLING ---
+        let finalMsg = err.message;
+        
+        // Handle "Failed to fetch" (Offline or Server Down)
+        if (err.name === 'TypeError' && err.message === 'Failed to fetch') {
+            finalMsg = "CONNECTION_REFUSED (IS_SERVER_ONLINE?)";
+        }
+
+        errorArea.innerHTML = `[FATAL]: ${finalMsg}`;
         errorArea.classList.remove('hidden');
+
+        // Auto-hide error after 5 seconds
+        errorTimeout = setTimeout(() => {
+            errorArea.classList.add('hidden');
+        }, 5000);
+
     } finally {
         submitBtn.innerText = originalText;
         submitBtn.disabled = false;
