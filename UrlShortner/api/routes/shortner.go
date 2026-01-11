@@ -9,6 +9,7 @@ import (
 	"github.com/Kaushikmak/UrlShortner/helper"
 	"github.com/asaskevich/govalidator"
 	"github.com/gofiber/fiber/v3"
+	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
 )
 
@@ -64,6 +65,32 @@ func ShortnerURL(c fiber.Ctx) error {
 
 	// enforce to use HTTP
 	body.URL = helper.EnforceHTTP(body.URL)
+
+	// id
+	var id string
+	if body.CustomShortner == "" {
+		id = uuid.New().String()[:6]
+	} else {
+		id = body.CustomShortner
+	}
+
+	redisDB_0 := db.CreateClient(0)
+	defer redisDB_0.Close()
+
+	val, err = redisDB_0.Get(db.Ctx, id).Result()
+
+	if val != "" {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "Custom shortner already in use"})
+	}
+
+	if body.Expiry == 0 {
+		body.Expiry = 24
+	}
+
+	err = redisDB_0.Set(db.Ctx, id, body.URL, body.Expiry*time.Minute).Err()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "unable to connect to server"})
+	}
 
 	return nil
 }
