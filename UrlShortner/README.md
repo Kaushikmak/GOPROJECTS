@@ -1,18 +1,15 @@
-GOSHRT
-A High-Performance URL Shortener in Go
-=====================================
+# GOSHRT
+### A High-Performance URL Shortener in Go
 
 Goshrt is a high-performance, open-source URL shortener service designed to demonstrate low-latency request routing using Go and Redis. The system combines an efficient API backend with a minimal frontend interface, optimized for high throughput and low resource overhead.
 
 The project emphasizes performance, correctness, and simplicity, making it suitable both as a production-grade service and as a reference project for backend engineering in Go.
 
---------------------------------------------------------------------
+---
 
-OVERVIEW
---------
+## OVERVIEW
 
 Goshrt provides:
-
 - Fast URL shortening and redirection
 - Sub-millisecond key lookups using Redis
 - IP-based rate limiting to prevent abuse
@@ -20,104 +17,88 @@ Goshrt provides:
 - Time-to-live (TTL) support for link expiry
 - Fully containerized deployment using Docker
 
---------------------------------------------------------------------
+---
 
-FEATURES
---------
+## FEATURES
 
-High Performance
-Built using the Fiber web framework (powered by fasthttp) to minimize memory allocations and reduce request latency in hot paths.
+* **High Performance:** Built using the Fiber web framework (powered by fasthttp) to minimize memory allocations and reduce request latency in hot paths.
+* **In-Memory Speed:** Redis is used as the primary data store, enabling extremely fast read and write operations.
+* **Rate Limiting:** IP-based throttling ensures fair usage and protects the service from excessive requests.
+* **Custom Aliases:** Users can define custom short codes instead of randomly generated identifiers.
+* **TTL (Expiry) Support:** Links can expire automatically after a configurable duration such as 24 hours, 7 days, or never.
+* **Dockerized Architecture:** The complete system, including Redis, can be deployed using Docker Compose with minimal setup.
 
-In-Memory Speed
-Redis is used as the primary data store, enabling extremely fast read and write operations.
+---
 
-Rate Limiting
-IP-based throttling ensures fair usage and protects the service from excessive requests.
+## TECH STACK
 
-Custom Aliases
-Users can define custom short codes instead of randomly generated identifiers.
+* **Language:** Go (Golang)
+* **Backend Framework:** Fiber v2
+* **Database:** Redis
+* **Containerization:** Docker and Docker Compose
+* **Frontend:** HTML5, CSS3, Vanilla JavaScript
 
-TTL (Expiry) Support
-Links can expire automatically after a configurable duration such as 24 hours, 7 days, or never.
+---
 
-Dockerized Architecture
-The complete system, including Redis, can be deployed using Docker Compose with minimal setup.
+## PREREQUISITES
 
---------------------------------------------------------------------
+* Go version 1.19 or higher
+* Docker and Docker Compose
+* Redis (only if not using Docker)
 
-TECH STACK
-----------
+---
 
-Language
-Go (Golang)
+## INSTALLATION AND LOCAL SETUP
 
-Backend Framework
-Fiber v2
+### METHOD A: DOCKER COMPOSE (RECOMMENDED)
 
-Database
-Redis
+1.  Clone the repository:
+    ```bash
+    git clone [https://github.com/kaushikmak/goshrt.git](https://github.com/kaushikmak/goshrt.git)
+    cd goshrt
+    ```
 
-Containerization
-Docker and Docker Compose
+2.  Create a `.env` file in the root directory:
+    ```env
+    DB_ADDR="localhost:6379"
+    DB_PASS=""
+    APP_PORT=":3000"
+    DOMAIN="localhost:3000"
+    API_QUOTA=10
+    ```
 
-Frontend
-HTML5, CSS3, Vanilla JavaScript
+3.  Build and run:
+    ```bash
+    docker-compose up --build
+    ```
 
---------------------------------------------------------------------
+    * **Frontend:** `http://localhost:3000`
+    * **API:** `http://localhost:3000/api/v1`
 
-PREREQUISITES
--------------
+### METHOD B: BARE METAL
 
-- Go version 1.19 or higher
-- Docker and Docker Compose
-- Redis (only if not using Docker)
+1.  Start your local Redis server.
 
---------------------------------------------------------------------
+2.  Install dependencies:
+    ```bash
+    go mod tidy
+    ```
 
-INSTALLATION AND LOCAL SETUP
-----------------------------
+3.  Run the application:
+    ```bash
+    go run main.go
+    ```
 
-METHOD A: DOCKER COMPOSE (RECOMMENDED)
+---
 
-1. git clone https://github.com/kaushikmak/goshrt.git
-2. cd goshrt
-3. Create .env file
+## API USAGE
 
-DB_ADDR="localhost:6379"
-DB_PASS=""
-APP_PORT=":3000"
-DOMAIN="localhost:3000"
-API_QUOTA=10
+**Endpoint:** `POST /api/v1`
 
-4. docker-compose up --build
-
-Frontend: http://localhost:3000
-API: http://localhost:3000/api/v1
-
---------------------------------------------------------------------
-
-METHOD B: BARE METAL
-
-1. Start Redis
-2. go mod tidy
-3. go run main.go
-
---------------------------------------------------------------------
-
-API USAGE
----------
-
-POST /api/v1
-
+**Request Body:**
+```json
 {
-  "url": "https://google.com",
+  "url": "[https://google.com](https://google.com)",
   "customshortner": "goog",
   "expiry": "24h"
 }
-
---------------------------------------------------------------------
-
-LICENSE
--------
-
-MIT License
