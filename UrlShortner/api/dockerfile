@@ -1,0 +1,23 @@
+# Stage 1: Build
+FROM golang:alpine as builder
+
+RUN mkdir /build
+ADD . /build/
+WORKDIR /build
+
+RUN go build -o main .
+
+# Stage 2: Final Minimal Image
+FROM alpine
+
+RUN adduser -S -D -H -h /app appuser
+USER appuser
+
+WORKDIR /app
+
+COPY --from=builder /build/main /app/main
+
+EXPOSE 3000
+
+
+CMD [ "./main" ]
