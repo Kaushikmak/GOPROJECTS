@@ -13,10 +13,11 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
+// FIXED: Expiry is now a string to accept "24h", "10m", etc.
 type request struct {
-	URL            string        `json:"url"`
-	CustomShortner string        `json:"customshortner"`
-	Expiry         time.Duration `json:"expiry"`
+	URL            string `json:"url"`
+	CustomShortner string `json:"customshortner"`
+	Expiry         string `json:"expiry"`
 }
 
 type response struct {
@@ -34,7 +35,7 @@ func ShortnerURL(c fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Cannot parse JSON"})
 	}
 
-	// rate limiting
+	// --- Rate Limiting ---
 	redisDB_1 := db.CreateClient(1)
 	defer redisDB_1.Close()
 	val, err := redisDB_1.Get(db.Ctx, c.IP()).Result()
@@ -51,20 +52,18 @@ func ShortnerURL(c fiber.Ctx) error {
 		}
 	}
 
-	// validate url
+	// --- Validation ---
 	if !govalidator.IsURL(body.URL) {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid URL"})
 	}
 
-	// check for self looping domain
 	if helper.DomainError(body.URL) {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Domain violation"})
 	}
 
-	// enforce to use HTTP
 	body.URL = helper.EnforceHTTP(body.URL)
 
-	// id
+	// --- ID Generation ---
 	var id string
 	if body.CustomShortner == "" {
 		id = uuid.New().String()[:6]
@@ -75,11 +74,19 @@ func ShortnerURL(c fiber.Ctx) error {
 	redisDB_0 := db.CreateClient(0)
 	defer redisDB_0.Close()
 
-	if body.Expiry == 0 {
-		body.Expiry = 24 * time.Hour
+	//  Default to 24h if empty
+	if body.Expiry == "" {
+		body.Expiry = "24h"
 	}
 
-	success, err := redisDB_0.SetNX(db.Ctx, id, body.URL, body.Expiry).Result()
+	// Parse the string (e.g., "24h") into a time.Duration object
+	expiryDuration, err := time.ParseDuration(body.Expiry)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid expiry format. Use 24h, 10m, etc."})
+	}
+
+	// Use the parsed duration (expiryDuration) for Redis
+	success, err := redisDB_0.SetNX(db.Ctx, id, body.URL, expiryDuration).Result()
 
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "unable to connect to server"})
@@ -89,10 +96,11 @@ func ShortnerURL(c fiber.Ctx) error {
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "Custom shortner already in use"})
 	}
 
+	// --- Response ---
 	resp := response{
 		URL:             body.URL,
 		CustomShortner:  "",
-		Expiry:          body.Expiry,
+		Expiry:          expiryDuration,
 		XRateRemaining:  10,
 		XRateLimitReset: 30 * time.Minute,
 	}
@@ -103,7 +111,6 @@ func ShortnerURL(c fiber.Ctx) error {
 	resp.XRateRemaining, _ = strconv.Atoi(val)
 
 	ttl, _ := redisDB_1.TTL(db.Ctx, c.IP()).Result()
-
 	resp.XRateLimitReset = ttl / time.Nanosecond / time.Minute
 
 	resp.CustomShortner = os.Getenv("DOMAIN") + "/" + id

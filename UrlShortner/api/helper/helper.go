@@ -13,9 +13,8 @@ func EnforceHTTP(url string) string {
 }
 
 func DomainError(url string) bool {
-
 	if url == os.Getenv("DOMAIN") {
-		return false
+		return true
 	}
 
 	newURL := strings.Replace(url, "http://", "", 1)
@@ -24,9 +23,8 @@ func DomainError(url string) bool {
 	newURL = strings.Split(newURL, "/")[0]
 
 	if newURL == os.Getenv("DOMAIN") {
-		return false
+		return true
 	}
 
-	return true
-
+	return false
 }
