@@ -1,6 +1,6 @@
 // --- CONFIGURATION ---
 // Use your Ngrok URL here
-const API_BASE = "https://kinematographic-supercolossally-hollie.ngrok-free.dev/api/v1";
+const API_BASE = "https://f9ginzmwri.ap-southeast-1.awsapprunner.com/api/v1";
 
 // --- THEME LOGIC ---
 const themeBtn = document.getElementById('theme-toggle');
@@ -154,7 +154,7 @@ form.addEventListener('submit', async (e) => {
         const endTime = performance.now();
         const latency = (endTime - startTime).toFixed(0);
 
-        const fullShortLink = `http://${data.customshort}`;
+        const fullShortLink = `https://${data.customshort}`;
         resultInput.value = fullShortLink;
         
         latencyDisplay.innerHTML = `${latency}ms`;
