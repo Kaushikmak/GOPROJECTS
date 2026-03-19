@@ -9,10 +9,8 @@ import (
 func ResolveURL(c fiber.Ctx) error {
 	url := c.Params("url")
 
-	redisDBclient := db.CreateClient(0)
-	defer redisDBclient.Close()
-
-	value, err := redisDBclient.Get(db.Ctx, url).Result()
+	// Retrieve the original URL using the global database client
+	value, err := db.Client.Get(db.Ctx, url).Result()
 
 	if err == redis.Nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "short url not found in database"})
@@ -20,10 +18,9 @@ func ResolveURL(c fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "cannot connect to database"})
 	}
 
-	redisDBclient_Increment := db.CreateClient(1)
-	defer redisDBclient_Increment.Close()
+	// Increment the global click counter using the same connection pool
+	_ = db.Client.Incr(db.Ctx, "counter").Err()
 
-	_ = redisDBclient_Increment.Incr(db.Ctx, "counter")
-
+	// Execute HTTP 301 Redirect to the target destination
 	return c.Redirect().Status(fiber.StatusMovedPermanently).To(value)
 }

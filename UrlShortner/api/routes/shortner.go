@@ -13,7 +13,6 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-// FIXED: Expiry is now a string to accept "24h", "10m", etc.
 type request struct {
 	URL            string `json:"url"`
 	CustomShortner string `json:"customshortner"`
@@ -36,15 +35,13 @@ func ShortnerURL(c fiber.Ctx) error {
 	}
 
 	// --- Rate Limiting ---
-	redisDB_1 := db.CreateClient(1)
-	defer redisDB_1.Close()
-	val, err := redisDB_1.Get(db.Ctx, c.IP()).Result()
+	val, err := db.Client.Get(db.Ctx, c.IP()).Result()
 	if err == redis.Nil {
-		_ = redisDB_1.Set(db.Ctx, c.IP(), os.Getenv("API_QUOTA"), 30*60*time.Second).Err()
+		_ = db.Client.Set(db.Ctx, c.IP(), os.Getenv("API_QUOTA"), 30*60*time.Second).Err()
 	} else {
 		valInt, _ := strconv.Atoi(val)
 		if valInt <= 0 {
-			limit, _ := redisDB_1.TTL(db.Ctx, c.IP()).Result()
+			limit, _ := db.Client.TTL(db.Ctx, c.IP()).Result()
 			return c.Status(fiber.StatusServiceUnavailable).JSON(fiber.Map{
 				"error":            "Rate limit exceeded",
 				"rate_limit_reset": limit / time.Nanosecond / time.Second,
@@ -71,9 +68,6 @@ func ShortnerURL(c fiber.Ctx) error {
 		id = body.CustomShortner
 	}
 
-	redisDB_0 := db.CreateClient(0)
-	defer redisDB_0.Close()
-
 	//  Default to 24h if empty
 	if body.Expiry == "" {
 		body.Expiry = "24h"
@@ -86,7 +80,7 @@ func ShortnerURL(c fiber.Ctx) error {
 	}
 
 	// Use the parsed duration (expiryDuration) for Redis
-	success, err := redisDB_0.SetNX(db.Ctx, id, body.URL, expiryDuration).Result()
+	success, err := db.Client.SetNX(db.Ctx, id, body.URL, expiryDuration).Result()
 
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "unable to connect to server"})
@@ -105,12 +99,12 @@ func ShortnerURL(c fiber.Ctx) error {
 		XRateLimitReset: 30 * time.Minute,
 	}
 
-	redisDB_1.Decr(db.Ctx, c.IP())
+	db.Client.Decr(db.Ctx, c.IP())
 
-	val, _ = redisDB_1.Get(db.Ctx, c.IP()).Result()
+	val, _ = db.Client.Get(db.Ctx, c.IP()).Result()
 	resp.XRateRemaining, _ = strconv.Atoi(val)
 
-	ttl, _ := redisDB_1.TTL(db.Ctx, c.IP()).Result()
+	ttl, _ := db.Client.TTL(db.Ctx, c.IP()).Result()
 	resp.XRateLimitReset = ttl / time.Nanosecond / time.Minute
 
 	resp.CustomShortner = os.Getenv("DOMAIN") + "/" + id

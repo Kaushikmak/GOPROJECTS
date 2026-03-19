@@ -5,34 +5,38 @@ import (
 	"log"
 	"os"
 
+	"github.com/Kaushikmak/UrlShortner/db"
 	"github.com/Kaushikmak/UrlShortner/routes"
 	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/middleware/cors"
 	"github.com/gofiber/fiber/v3/middleware/logger"
 	"github.com/joho/godotenv"
 )
 
+func main() {
+	// Load environment variables for local testing
+	godotenv.Load()
 
-func setupRoutes(app *fiber.App){
-    app.Get("/:url",routes.ResolveURL)
-    app.Post("/api/v1",routes.ShortnerURL)
+	// Initialize the Singleton Redis Connection
+	db.InitRedis()
 
-}
+	app := fiber.New()
 
+	// Middleware
+	app.Use(logger.New())
+	app.Use(cors.New())
 
-func main(){
+	// Route Registration
+	api := app.Group("/api/v1")
+	api.Post("/", routes.ShortnerURL)
 
-   err := godotenv.Load()
-   
-   if err!=nil{
-        fmt.Println(err)
-   }
+	app.Get("/:url", routes.ResolveURL)
 
-    app := fiber.New()
-    
-    app.Use(logger.New())
+	port := os.Getenv("APP_PORT")
+	if port == "" {
+		port = ":3000"
+	}
 
-    setupRoutes(app)
-
-    log.Fatal(app.Listen(os.Getenv("APP_PORT")))
-
+	fmt.Printf("Server starting on port %s\n", port)
+	log.Fatal(app.Listen(port))
 }
